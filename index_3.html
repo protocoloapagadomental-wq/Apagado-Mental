@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apagado Mental — El Protocolo de Apagado Mental</title>
+<style>
+  :root{
+    --navy-dark:#060d18;
+    --navy:#0b1b2e;
+    --navy-light:#12283f;
+    --cyan:#5ce1e6;
+    --cyan-dim:#3a7d8c;
+    --gold:#f2b544;
+    --gold-dim:#a67f2e;
+    --white:#f3f6fa;
+    --body:#c7d3e0;
+    --max:1100px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Poppins',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--navy-dark);
+    color:var(--body);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  img{max-width:100%;display:block;}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px;}
+  .mono{font-family:'DejaVu Sans Mono',monospace;}
+
+  .tag{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:'DejaVu Sans Mono',monospace;font-size:12px;letter-spacing:1.5px;
+    border:1.3px solid var(--cyan);color:var(--cyan);
+    padding:6px 14px;border-radius:4px;background:rgba(92,225,230,0.05);
+  }
+  .tag.gold{border-color:var(--gold);color:var(--gold);background:rgba(242,181,68,0.05);}
+
+  h1,h2,h3{color:var(--white);font-weight:700;line-height:1.2;}
+  h1{font-size:clamp(32px,5vw,52px);}
+  h2{font-size:clamp(26px,4vw,38px);}
+  h3{font-size:20px;}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--gold);color:var(--navy-dark);font-weight:700;
+    padding:16px 32px;border-radius:8px;text-decoration:none;
+    font-size:17px;border:none;cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 10px 30px -8px rgba(242,181,68,0.4);
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px -8px rgba(242,181,68,0.55);}
+  .btn-arrow{transition:transform .15s ease;}
+  .btn:hover .btn-arrow{transform:translateX(4px);}
+  .micro{font-size:13px;color:var(--cyan-dim);margin-top:14px;}
+
+  section{padding:100px 0;position:relative;}
+  .bg-grid{
+    position:absolute;inset:0;pointer-events:none;
+    background-image:
+      linear-gradient(to right, rgba(92,225,230,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(92,225,230,0.04) 1px, transparent 1px);
+    background-size:56px 56px;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 30%, black 0%, transparent 75%);
+  }
+
+  /* ---------------- HEADER ---------------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(6,13,24,0.85);backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(92,225,230,0.12);
+  }
+  header .wrap{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;}
+  .brand{color:var(--white);font-weight:700;font-size:17px;letter-spacing:0.5px;}
+  header .btn{padding:11px 22px;font-size:14px;}
+
+  /* ---------------- HERO ---------------- */
+  .hero{padding-top:70px;}
+  .hero .wrap{position:relative;z-index:1;}
+  .hero-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
+  .hero-eyebrow{margin-bottom:22px;}
+  .hero h1{margin-bottom:20px;}
+  .hero .accent{color:var(--gold);}
+  .hero-sub{font-size:18px;color:var(--body);max-width:520px;margin-bottom:34px;}
+  .hero-sub strong{color:var(--white);}
+  .hero-cta-row{display:flex;flex-direction:column;align-items:flex-start;gap:0;}
+  .hero-visual{position:relative;}
+  .hero-visual img{border-radius:16px;box-shadow:0 60px 100px -30px rgba(0,0,0,0.6);}
+  .hero-price-badge{
+    position:absolute;top:-18px;right:20px;
+    background:var(--navy);border:1.3px solid var(--gold);border-radius:40px;
+    padding:10px 20px;font-family:'DejaVu Sans Mono',monospace;font-size:14px;color:var(--gold);
+    box-shadow:0 15px 30px -10px rgba(0,0,0,0.5);
+  }
+
+  /* ---------------- REFRAME (problema) ---------------- */
+  .reframe{background:linear-gradient(180deg,var(--navy-dark) 0%, var(--navy) 100%);}
+  .reframe-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:64px;align-items:center;}
+  .reframe-visual img{border-radius:16px;box-shadow:0 50px 90px -25px rgba(0,0,0,0.6);}
+  .reframe-eyebrow{margin-bottom:18px;}
+  .reframe h2{margin-bottom:22px;}
+  .reframe p{font-size:17px;margin-bottom:16px;max-width:520px;}
+  .reframe .hl{color:var(--cyan);font-weight:600;}
+  .reframe .solved{color:var(--gold);font-weight:600;}
+
+  /* ---------------- AUTOCUALIFICACIÓN ---------------- */
+  .qualify .wrap{position:relative;z-index:1;}
+  .qualify-head{text-align:center;max-width:640px;margin:0 auto 50px;}
+  .qualify-head h2{margin-top:16px;}
+  .qualify-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:820px;margin:0 auto;}
+  .qualify-item{
+    display:flex;align-items:flex-start;gap:14px;
+    background:rgba(255,255,255,0.02);border:1px solid rgba(92,225,230,0.15);
+    border-radius:10px;padding:18px 20px;
+  }
+  .qualify-check{
+    flex-shrink:0;width:22px;height:22px;border-radius:5px;
+    background:rgba(92,225,230,0.12);color:var(--cyan);
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+    margin-top:2px;
+  }
+  .qualify-item span{color:var(--white);font-size:15px;}
+  .placeholder-note{
+    text-align:center;margin-top:24px;font-size:13px;color:var(--gold-dim);
+    font-family:'DejaVu Sans Mono',monospace;
+  }
+
+  /* ---------------- 3 FASES 01-02-03 ---------------- */
+  .phases{background:linear-gradient(180deg,var(--navy) 0%, var(--navy-dark) 100%);}
+  .phases .wrap{position:relative;z-index:1;}
+  .phases-head{text-align:center;max-width:680px;margin:0 auto 60px;}
+  .phases-head h2{margin-top:16px;}
+  .phases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;position:relative;}
+  .phases-grid::before{
+    content:'';position:absolute;top:56px;left:16%;right:16%;height:1px;
+    background:linear-gradient(to right, transparent, rgba(92,225,230,0.3) 20%, rgba(92,225,230,0.3) 80%, transparent);
+    z-index:0;
+  }
+  .phase-card{
+    position:relative;z-index:1;
+    background:var(--navy);border:1px solid rgba(92,225,230,0.15);
+    border-radius:16px;padding:36px 26px 30px;
+    transition:transform .2s ease, border-color .2s ease;
+  }
+  .phase-card.active{
+    border-color:var(--gold);
+    background:linear-gradient(160deg, rgba(242,181,68,0.08), var(--navy) 60%);
+    transform:translateY(-10px);
+    box-shadow:0 30px 60px -20px rgba(242,181,68,0.15);
+  }
+  .phase-num{
+    font-family:'DejaVu Sans Mono',monospace;font-size:15px;color:var(--cyan-dim);
+    width:44px;height:44px;border-radius:50%;border:1.3px solid var(--cyan-dim);
+    display:flex;align-items:center;justify-content:center;margin-bottom:20px;
+    background:var(--navy-dark);
+  }
+  .phase-card.active .phase-num{color:var(--gold);border-color:var(--gold);}
+  .phase-card h3{margin-bottom:10px;}
+  .phase-card.active h3{color:var(--gold);}
+  .phase-card p{font-size:14.5px;}
+  .phase-tag{margin-top:16px;}
+
+  /* ---------------- BONUS ---------------- */
+  .bonus .wrap{position:relative;z-index:1;}
+  .bonus-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:56px;align-items:center;}
+  .bonus-visual img{border-radius:14px;box-shadow:0 40px 80px -22px rgba(0,0,0,0.6);border:1px solid rgba(242,181,68,0.2);}
+  .bonus-eyebrow{margin-bottom:18px;}
+  .bonus h2{margin-bottom:18px;}
+  .bonus p{font-size:16.5px;margin-bottom:14px;}
+  .bonus .list{margin-top:22px;display:flex;flex-direction:column;gap:12px;}
+  .bonus .list-item{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:var(--white);}
+  .bonus .list-item .dot{color:var(--gold);flex-shrink:0;}
+
+  /* ---------------- BENEFICIOS ---------------- */
+  .benefits{background:linear-gradient(180deg,var(--navy-dark) 0%, var(--navy) 100%);}
+  .benefits-head{text-align:center;max-width:640px;margin:0 auto 50px;}
+  .benefits-head h2{margin-top:16px;}
+  .benefits-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:820px;margin:0 auto;}
+
+  /* ---------------- PDF PREVIEW ---------------- */
+  .preview .wrap{position:relative;z-index:1;}
+  .preview-head{text-align:center;max-width:640px;margin:0 auto 50px;}
+  .preview-head h2{margin-top:16px;}
+  .preview-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:40px;align-items:center;}
+  .preview-grid img{border-radius:14px;box-shadow:0 40px 80px -22px rgba(0,0,0,0.55);}
+  .preview-cover{transform:rotate(-3deg);}
+  .preview-page{transform:rotate(1.5deg);}
+
+  /* ---------------- PRECIO + GARANTÍA ---------------- */
+  .price{background:linear-gradient(180deg,var(--navy) 0%, var(--navy-dark) 100%);text-align:center;}
+  .price .wrap{max-width:720px;position:relative;z-index:1;}
+  .price-anchor{font-size:24px;color:var(--cyan-dim);text-decoration:line-through;margin-bottom:6px;}
+  .price-final{font-size:56px;font-weight:700;color:var(--gold);margin-bottom:10px;}
+  .price-sub{font-size:16px;margin-bottom:36px;}
+  .guarantee{
+    background:rgba(255,255,255,0.02);border:1px solid rgba(92,225,230,0.15);
+    border-radius:14px;padding:28px 32px;margin-top:40px;text-align:left;
+  }
+  .guarantee h3{margin-bottom:10px;color:var(--cyan);}
+  .guarantee p{font-size:14.5px;}
+
+  /* ---------------- FAQ ---------------- */
+  .faq .wrap{max-width:820px;position:relative;z-index:1;}
+  .faq-head{text-align:center;margin-bottom:50px;}
+  .faq-head h2{margin-top:16px;}
+  .faq-item{border-bottom:1px solid rgba(92,225,230,0.15);padding:22px 0;}
+  .faq-item summary{
+    cursor:pointer;color:var(--white);font-weight:600;font-size:16px;
+    list-style:none;display:flex;justify-content:space-between;align-items:center;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{content:'+';color:var(--gold);font-size:22px;font-weight:400;margin-left:16px;}
+  .faq-item[open] summary::after{content:'–';}
+  .faq-item p{margin-top:14px;font-size:15px;padding-right:30px;}
+
+  /* ---------------- CTA FINAL ---------------- */
+  .final-cta{
+    background:radial-gradient(ellipse at 50% 30%, var(--navy-light) 0%, var(--navy-dark) 70%);
+    text-align:center;
+  }
+  .final-cta .wrap{max-width:640px;position:relative;z-index:1;}
+  .final-cta h2{margin-bottom:16px;}
+  .final-cta p{font-size:17px;margin-bottom:34px;}
+
+  /* ---------------- FOOTER ---------------- */
+  footer{background:var(--navy-dark);border-top:1px solid rgba(92,225,230,0.1);padding:50px 0 34px;}
+  footer .wrap{text-align:center;}
+  footer .brand{margin-bottom:14px;}
+  footer .legal{font-size:12.5px;color:var(--cyan-dim);max-width:640px;margin:0 auto 18px;}
+  footer .copyright{font-size:12px;color:#3a5068;font-family:'DejaVu Sans Mono',monospace;}
+
+  /* ---------------- RESPONSIVE ---------------- */
+  @media (max-width: 860px){
+    section{padding:64px 0;}
+    .hero{padding-top:40px;}
+    .hero-grid, .reframe-grid, .bonus-grid, .preview-grid{grid-template-columns:1fr;gap:40px;}
+    .reframe-visual{order:2;}
+    .reframe-text{order:1;}
+    .qualify-grid, .benefits-grid{grid-template-columns:1fr;}
+    .phases-grid{grid-template-columns:1fr;gap:20px;}
+    .phases-grid::before{display:none;}
+    .phase-card.active{transform:none;}
+    .hero-price-badge{position:static;display:inline-flex;margin-bottom:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">APAGADO MENTAL</div>
+    <a href="https://payhip.com/b/TnVb2" target="_blank" rel="noopener" class="btn" onclick="gtag('event','click_boton_compra',{'event_category':'conversion'})">
+      Comprar — 12,99€
+    </a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="bg-grid"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="hero-eyebrow"><span class="tag">PROTOCOLO_APAGADO_MENTAL // PDF DESCARGABLE</span></div>
+        <h1>¿3 AM y los ojos<br>abiertos <span class="accent">otra vez</span>?</h1>
+        <p class="hero-sub"><strong>No es la edad. Es tu sistema nervioso.</strong><br>
+        ¿Te acuestas agotada y tu mente no para? ¿Te despiertas a las 3 AM sin saber por qué?
+        No es tu culpa — es tu sistema nervioso atrapado en alerta. Y tiene solución exacta.
+        Sin rutinas de una hora. Sin fuerza de voluntad. Sin aplicaciones de pago.</p>
+        <div class="hero-cta-row">
+          <a href="https://payhip.com/b/TnVb2" target="_blank" rel="noopener" class="btn" onclick="gtag('event','click_boton_compra',{'event_category':'conversion'})">
+            Quiero dormir esta noche <span class="btn-arrow">→</span>
+          </a>
+          <p class="micro">Pago 100% seguro, procesado por Payhip · Acceso inmediato · + Bonus incluido</p>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-price-badge mono">PDF + BONUS · 12,99€</div>
+        <img src="maqueta-de-héroe.jpg" alt="Protocolo de Apagado Mental en tablet y móvil">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REFRAME DEL PROBLEMA ============ -->
+<section class="reframe">
+  <div class="wrap">
+    <div class="reframe-grid">
+      <div class="reframe-visual">
+        <img src="mujer-3am.jpg" alt="Mujer despierta a las 3 AM mirando el móvil">
+      </div>
+      <div class="reframe-text">
+        <div class="reframe-eyebrow"><span class="tag gold">LA VERDAD</span></div>
+        <h2>No necesitas más<br>consejos para dormir</h2>
+        <p>Ya sabes que "hay que reducir pantallas" y "cuidar la rutina". Eso <span class="hl">no es lo que falla</span>.</p>
+        <p>Lo que falla es que tu sistema nervioso sigue en modo alerta cuando tu cuerpo ya debería estar
+        apagándose — y ningún consejo genérico apaga un sistema nervioso activado. Hace falta una secuencia
+        concreta, en el orden correcto.</p>
+        <p><span class="solved">El Protocolo de Apagado Mental</span> es esa secuencia: 3 fases que llevan tu
+        mente de 100 a 0 antes de dormir, esta misma noche.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AUTOCUALIFICACIÓN ============ -->
+<section class="qualify">
+  <div class="bg-grid"></div>
+  <div class="wrap">
+    <div class="qualify-head">
+      <span class="tag">¿ES ESTO PARA TI?</span>
+      <h2>Esto es para ti si...</h2>
+    </div>
+    <div class="qualify-grid">
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Te acuestas cansada pero en cuanto apagas la luz, tu mente se enciende</span></div>
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Llevas semanas (o meses) mirando el techo a las 3am sin saber por qué</span></div>
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Ya has probado de todo — manzanilla, apps de meditación, "no mirar el móvil" — y nada cambia de verdad</span></div>
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Al día siguiente te levantas agotada, de mal humor, sin saber cómo romper el ciclo</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 FASES — 01 / 02 / 03 ============ -->
+<section class="phases">
+  <div class="wrap">
+    <div class="phases-head">
+      <span class="tag gold">EL PROTOCOLO</span>
+      <h2>Una secuencia biológica en cadena</h2>
+      <p style="margin-top:16px;">No es un menú de opciones — cada fase hace posible la siguiente. Sin la Fase 1,
+      los suplementos de la Fase 2 compiten contra tu estrés químico. Sin bloquear la luz, la respiración de la
+      Fase 3 es insuficiente.</p>
+    </div>
+    <div class="phases-grid">
+      <div class="phase-card">
+        <div class="phase-num mono">01</div>
+        <h3>Intercepción del Cortisol</h3>
+        <p>Un "vaciado de cerebro" de 5 minutos exactos que corta la rumiación y reduce la carga de tu eje
+        de estrés antes de que llegue a la cama contigo.</p>
+        <div class="phase-tag"><span class="tag">REDUCE CORTISOL</span></div>
+      </div>
+      <div class="phase-card active">
+        <div class="phase-num mono">02</div>
+        <h3>Arquitectura Lumínica + Tríada GABA</h3>
+        <p>Bloquea el espectro de luz que le dice a tu cerebro que aún es de día, y activa tu principal
+        neurotransmisor inhibidor de forma natural, sin fármacos que rompan tu sueño REM.</p>
+        <div class="phase-tag"><span class="tag gold">HABILITA MELATONINA</span></div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num mono">03</div>
+        <h3>Reset Fisiológico</h3>
+        <p>Un mecanismo de respiración que colapsa los picos de estrés en segundos y regula tu ritmo
+        cardíaco, incluso si te despiertas a las 3 AM.</p>
+        <div class="phase-tag"><span class="tag">EJECUCIÓN MECÁNICA</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BONUS ============ -->
+<section class="bonus">
+  <div class="bg-grid"></div>
+  <div class="wrap">
+    <div class="bonus-grid">
+      <div class="bonus-visual">
+        <img src="portada-extra.jpg" alt="Bonus: Guía para Dormir Mejor">
+      </div>
+      <div class="bonus-text">
+        <div class="bonus-eyebrow"><span class="tag gold">🎁 BONUS INCLUIDO GRATIS</span></div>
+        <h2>Guía para Dormir Mejor</h2>
+        <p>8 estrategias adicionales — cada una con su mecanismo fisiológico explicado, no consejos genéricos
+        de lista — para que lo que consigues con el Protocolo se sostenga toda la noche, no solo en el
+        momento de dormirte.</p>
+        <div class="list">
+          <div class="list-item"><span class="dot">→</span><span>Ducha caliente en la ventana correcta</span></div>
+          <div class="list-item"><span class="dot">→</span><span>Luz natural al despertar, para anclar tu reloj biológico</span></div>
+          <div class="list-item"><span class="dot">→</span><span>Alimentación y suplementación de apoyo</span></div>
+          <div class="list-item"><span class="dot">→</span><span>Qué hacer si te despiertas y no consigues volver a dormir</span></div>
+        </div>
+        <p style="margin-top:22px;font-size:14px;color:var(--cyan-dim);">📋 También incluido: acceso a la
+        página de recursos, con enlaces directos a los suplementos y herramientas exactas de cada fase.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHECKLIST BENEFICIOS ============ -->
+<section class="benefits">
+  <div class="wrap">
+    <div class="benefits-head">
+      <span class="tag">LO QUE CONSIGUES</span>
+      <h2>Resultados, no promesas</h2>
+    </div>
+    <div class="benefits-grid" style="grid-template-columns:1fr;max-width:680px;">
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Vas a entender por qué tu cuerpo se activa justo a esa hora, aunque de día lo lleves bien</span></div>
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Vas a tener un ejercicio de 90 segundos listo para cuando el insomnio vuelva</span></div>
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Vas a saber qué hacer en el momento exacto en que tu mente empieza a acelerarse</span></div>
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Vas a dejar de sentir que estás sola dando vueltas en la cama sin salida</span></div>
+      <div class="qualify-item"><div class="qualify-check">✓</div><span>Vas a tener un plan claro de 3 fases, sin necesidad de recordar nada de memoria a las 3am</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PREVIEW DEL PDF ============ -->
+<section class="preview">
+  <div class="bg-grid"></div>
+  <div class="wrap">
+    <div class="preview-head">
+      <span class="tag gold">LO QUE RECIBES</span>
+      <h2>16 páginas, sin relleno</h2>
+    </div>
+    <div class="preview-grid">
+      <img class="preview-cover" src="portada-libro.jpg" alt="Portada del Protocolo de Apagado Mental">
+      <img class="preview-page" src="checklist-7dias.jpg" alt="Checklist de despliegue de 7 días">
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRECIO + GARANTÍA ============ -->
+<section class="price">
+  <div class="bg-grid"></div>
+  <div class="wrap">
+    <span class="tag">ACCESO INMEDIATO</span>
+    <div class="price-anchor mono" style="margin-top:22px;">19€</div>
+    <div class="price-final">12,99€</div>
+    <p class="price-sub">PDF completo + Bonus + Página de recursos · Descarga inmediata tras la compra</p>
+    <a href="https://payhip.com/b/TnVb2" target="_blank" rel="noopener" class="btn" onclick="gtag('event','click_boton_compra',{'event_category':'conversion'})">
+      Consigue el Protocolo <span class="btn-arrow">→</span>
+    </a>
+    <div class="guarantee">
+      <h3>Nuestra garantía</h3>
+      <p>Si en 7 días sientes que Apagado Mental no es para ti, escríbenos y evaluaremos tu caso para darte
+      una solución personalizada según tus necesidades. Eso sí, recuerda que el protocolo funciona si tú
+      pones de tu parte — nadie puede recalibrar tu descanso por ti, pero aquí tienes el mapa para conseguirlo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq">
+  <div class="wrap">
+    <div class="faq-head">
+      <span class="tag">PREGUNTAS FRECUENTES</span>
+      <h2 style="margin-top:16px;">Antes de que preguntes</h2>
+    </div>
+    <details class="faq-item" open>
+      <summary>¿Es un PDF o incluye audio/vídeo?</summary>
+      <p>Es un PDF descargable: una guía completa dividida en 3 fases, con resúmenes claros y acciones
+      concretas para cada noche. Puedes guardarlo en el móvil o imprimirlo.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Ya tomo melatonina u otros suplementos, ¿puedo seguir el protocolo?</summary>
+      <p>El protocolo combina hábitos de comportamiento (Brain Dump, respiración) con suplementos puntuales.
+      Si ya tomas medicación o suplementos, consulta con tu médico antes de añadir algo nuevo — lo indicamos
+      también dentro del propio PDF.</p>
+    </details>
+    <details class="faq-item">
+      <summary>¿Necesito comprar todos los productos que mencionáis?</summary>
+      <p>No. Las 3 fases funcionan aunque no uses ningún suplemento — el Brain Dump, las gafas ámbar y los
+      ejercicios de respiración no requieren comprar nada. Los suplementos son un refuerzo opcional, y el
+      bonus incluye la guía para encontrarlos si decides usarlos.</p>
+    </details>
+    <details class="faq-item">
+      <summary>¿Cómo recibo el protocolo después de comprar?</summary>
+      <p>La compra se procesa en Payhip y el PDF queda disponible para descarga inmediata en cuanto se
+      confirma el pago.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ============ CTA FINAL ============ -->
+<section class="final-cta">
+  <div class="wrap">
+    <h2>Esta noche puede ser diferente a las últimas que recuerdas.</h2>
+    <p>El Protocolo completo + Bonus + Página de recursos, listo para aplicar en los próximos 5 minutos.</p>
+    <a href="https://payhip.com/b/TnVb2" target="_blank" rel="noopener" class="btn" onclick="gtag('event','click_boton_compra',{'event_category':'conversion'})">
+      Quiero dormir esta noche <span class="btn-arrow">→</span>
+    </a>
+    <p class="micro">Pago 100% seguro, procesado por Payhip · Acceso inmediato</p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="brand mono">@apagado.mental</div>
+    <p class="legal">Este protocolo tiene fines informativos y no sustituye el diagnóstico ni el consejo de
+    un profesional de la salud. Si tomas medicación, consulta antes de incorporar suplementos.</p>
+    <div class="copyright">© 2026 APAGADO MENTAL</div>
+  </div>
+</footer>
+
+</body>
+</html>
